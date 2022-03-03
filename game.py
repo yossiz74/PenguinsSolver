@@ -1,14 +1,7 @@
 from dataclasses import dataclass
-
 from board import Board, EntityType
-from enum import Enum, auto
-
-
-class Direction(Enum):
-    LEFT = auto()
-    UP = auto()
-    RIGHT = auto()
-    DOWN = auto()
+from direction import Direction
+import copy
 
 
 @dataclass
@@ -63,9 +56,6 @@ class Game:
                 y -= 1
             return False
 
-    def solve(self):
-        return [Move(direction=Direction.LEFT, entity_type=EntityType.PENGUIN)]
-
     def get_all_possible_moves(self) -> list[Move]:
         possible_moves = []
         for et in EntityType:
@@ -74,9 +64,19 @@ class Game:
                 possible_moves.extend(entity_possible_moves)
         return possible_moves
 
-    def get_possible_moves_of(self, entity_type):
+    def get_possible_moves_of(self, entity_type) -> list[Move]:
         possible_moves = []
         for d in Direction:
             if self.entity_move_is_legal(entity_type, d):
                 possible_moves.append(Move(entity_type=entity_type, direction=d))
         return possible_moves
+
+    def solve(self):
+        possible_moves = self.get_all_possible_moves()
+        for m in possible_moves:
+            board_before_move = copy.deepcopy(self.board)
+            self.board.apply_move(m.entity_type, m.direction)
+            if self.is_won():
+                return [m]
+            self.board = board_before_move  # revert the move
+        return []

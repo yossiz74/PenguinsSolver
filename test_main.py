@@ -1,6 +1,7 @@
 import unittest
 from board import Board, EntityType
-from game import Game, Direction
+from game import Game
+from direction import Direction
 
 
 class UnitTests(unittest.TestCase):
@@ -97,6 +98,24 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(Direction.LEFT in [m.direction for m in possible_moves])
         self.assertTrue(Direction.DOWN in [m.direction for m in possible_moves])
 
+    def test_MoveEntitySingleStep(self):
+        board = Board(width=3, height=1)
+        board.place_entity(EntityType.PENGUIN, 0, 0)
+        board.place_entity(EntityType.BEAR1, 2, 0)
+        board.apply_move(EntityType.PENGUIN, Direction.RIGHT)
+        loc = board.get_entity_location(EntityType.PENGUIN)
+        self.assertEqual(1, loc.x)
+        self.assertEqual(0, loc.y)
+
+    def test_MoveEntityMultipleSteps(self):
+        board = Board(width=4, height=1)
+        board.place_entity(EntityType.PENGUIN, 0, 0)
+        board.place_entity(EntityType.BEAR1, 3, 0)
+        board.apply_move(EntityType.PENGUIN, Direction.RIGHT)
+        loc = board.get_entity_location(EntityType.PENGUIN)
+        self.assertEqual(2, loc.x)
+        self.assertEqual(0, loc.y)
+
 
 class IntegrationTests(unittest.TestCase):
     def test_PossibleMovesListIsEmptyIfThereAreNoPossibleMoves(self):
@@ -130,8 +149,21 @@ class EndToEndTests(unittest.TestCase):
         board = Board(width=3, height=1)
         board.place_entity(EntityType.PENGUIN, 2, 0)
         board.place_entity(EntityType.BEAR1, 0, 0)
+        board.place_entity(EntityType.WATER, 1, 0)
         game = Game(board)
         solution = game.solve()
         self.assertEqual(1, len(solution))
         self.assertEqual(Direction.LEFT, solution[0].direction)
+        self.assertEqual(EntityType.PENGUIN, solution[0].entity_type)
+
+    def test_GetWinningMoveIfThereAreTwoOption(self):
+        board = Board(width=3, height=3)
+        board.place_entity(EntityType.PENGUIN, 0, 0)
+        board.place_entity(EntityType.WATER, 1, 0)
+        board.place_entity(EntityType.BEAR1, 2, 0)
+        board.place_entity(EntityType.BEAR2, 0, 2)
+        game = Game(board)
+        solution = game.solve()
+        self.assertEqual(1, len(solution))
+        self.assertEqual(Direction.RIGHT, solution[0].direction)
         self.assertEqual(EntityType.PENGUIN, solution[0].entity_type)
