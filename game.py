@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
-from board import Board
+from board import Board, EntityType
 from enum import Enum, auto
-from entities import Entity, EntityType
 
 
 class Direction(Enum):
@@ -15,7 +14,7 @@ class Direction(Enum):
 @dataclass
 class Move:
     direction: Direction
-    entity: Entity
+    entity_type: EntityType
 
 
 class Game:
@@ -23,12 +22,12 @@ class Game:
         self.board = board
 
     def is_won(self) -> bool:
-        penguin_location = self.board.get_penguin_location()
-        water_location = self.board.get_water_location()
+        penguin_location = self.board.get_entity_location(EntityType.PENGUIN)
+        water_location = self.board.get_entity_location(EntityType.WATER)
         return penguin_location == water_location
 
     def penguin_move_is_legal(self, move) -> bool:
-        penguin_location = self.board.get_penguin_location()
+        penguin_location = self.board.get_entity_location(EntityType.PENGUIN)
         if move == move.LEFT:
             x = penguin_location.x - 1
             y = penguin_location.y
@@ -45,4 +44,4 @@ class Game:
             pass
 
     def solve(self):
-        return [Move(direction=Direction.LEFT, entity=Entity(entity_type=EntityType.PENGUIN))]
+        return [Move(direction=Direction.LEFT, entity_type=EntityType.PENGUIN)]
