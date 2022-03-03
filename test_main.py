@@ -45,6 +45,14 @@ class UnitTests(unittest.TestCase):
         game = Game(board)
         self.assertEqual(False, game.entity_move_is_legal(EntityType.PENGUIN, Direction.LEFT))  # assertFalse also asserts not returning value at all
 
+    def test_BearMoveIsIllegalIfThereIsAPenguinNeighbour(self):
+        board = Board(width=3, height=1)
+        board.place_entity(EntityType.PENGUIN, 1, 0)
+        board.place_entity(EntityType.BEAR1, 0, 0)
+        board.place_entity(EntityType.BEAR2, 2, 0)
+        game = Game(board)
+        self.assertEqual(False, game.entity_move_is_legal(EntityType.BEAR1, Direction.RIGHT))
+
     def test_PenguinMoveIsLegalIfThereIsABearInTheWay(self):
         board = Board(width=5, height=5)
         board.place_entity(EntityType.PENGUIN, 2, 2)
@@ -189,3 +197,16 @@ class EndToEndTests(unittest.TestCase):
         assert solution[0].entity_type in [EntityType.BEAR1, EntityType.BEAR2]
         self.assertEqual(Direction.RIGHT, solution[1].direction)
         self.assertEqual(EntityType.PENGUIN, solution[1].entity_type)
+
+    def test_FindSolutionWhenManyMovesAreNeeded(self):
+        board = Board(5, 5)
+        board.place_entity(EntityType.PENGUIN, 0, 2)
+        board.place_entity(EntityType.WATER, 2, 2)
+        board.place_entity(EntityType.BEAR1, 0, 0)
+        board.place_entity(EntityType.BEAR2, 1, 2)
+        board.place_entity(EntityType.BEAR3, 2, 0)
+        board.place_entity(EntityType.BEAR4, 3, 1)
+        board.place_entity(EntityType.BEAR5, 3, 3)
+        game = Game(board)
+        solution = game.solve()
+        self.assertTrue(game.is_won())

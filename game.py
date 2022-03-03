@@ -16,6 +16,7 @@ class Move:
 class Game:
     def __init__(self, board: Board):
         self.board = board
+        self.bad_boards = []
 
     def is_won(self) -> bool:
         penguin_location = self.board.get_entity_location(EntityType.PENGUIN)
@@ -27,35 +28,35 @@ class Game:
         if entity_location is None:
             return False
         if direction == Direction.LEFT:
-            x = entity_location.x - 2
+            x = entity_location.x - 1
             y = entity_location.y
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return True
+                    return x < entity_location.x - 1  # false if there is an immediate blocking neighbour, true if the blocker is farther
                 x -= 1
             return False
         if direction == Direction.RIGHT:
-            x = entity_location.x + 2
+            x = entity_location.x + 1
             y = entity_location.y
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return True
+                    return x > entity_location.x + 1
                 x += 1
             return False
         if direction == Direction.UP:
             x = entity_location.x
-            y = entity_location.y + 2
+            y = entity_location.y + 1
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return True
+                    return y > entity_location.y + 1
                 y += 1
             return False
         if direction == Direction.DOWN:
             x = entity_location.x
-            y = entity_location.y - 2
+            y = entity_location.y - 1
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return True
+                    return y < entity_location.y - 1
                 y -= 1
             return False
 
@@ -77,8 +78,13 @@ class Game:
     def solve(self):
         possible_moves = self.get_all_possible_moves()
         for m in possible_moves:
+            # print(f"Examining: {m}")
             board_before_move = copy.deepcopy(self.board)
             self.board.apply_move(m.entity_type, m.direction)
+            if any([self.board == x for x in self.bad_boards]):
+                # already examined this board setup, so just return with failure
+                return []
+            # print(self.board)
             if self.is_won():
                 return [m]
             else:
@@ -88,5 +94,8 @@ class Game:
                     overall_solution.extend(solution_moves)
                     return overall_solution
                 else:
+                    # print(f"Reverting {m}")
+                    self.bad_boards.append(self.board)
                     self.board = board_before_move  # revert the move
+                    # print(self.board)
         return []
