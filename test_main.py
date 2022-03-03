@@ -1,6 +1,7 @@
 import unittest
 from board import Board
-from game import Game, Move
+from game import Game, Direction
+from entities import EntityType
 
 
 class UnitTests(unittest.TestCase):
@@ -44,11 +45,23 @@ class IntegrationTests(unittest.TestCase):
         board = Board(width=3, height=1)
         board.place_penguin(2, 0)
         game = Game(board)
-        self.assertEqual(False, game.penguin_move_is_legal(Move.LEFT))  # assertFalse also asserts not returning value at all
+        self.assertEqual(False, game.penguin_move_is_legal(Direction.LEFT))  # assertFalse also asserts not returning value at all
 
     def test_PenguinMoveIsLegalIfThereIsABearInTheWay(self):
         board = Board(width=3, height=1)
         board.place_penguin(2, 0)
         board.place_bear(0, 0)
         game = Game(board)
-        self.assertTrue(game.penguin_move_is_legal(Move.LEFT))
+        self.assertTrue(game.penguin_move_is_legal(Direction.LEFT))
+
+
+class EndToEndTests(unittest.TestCase):
+    def test_GetWinningMoveIfThereIsJustOneOption(self):
+        board = Board(width=3, height=1)
+        board.place_penguin(2, 0)
+        board.place_bear(0, 0)
+        game = Game(board)
+        solution = game.solve()
+        self.assertEqual(1, len(solution))
+        self.assertEqual(Direction.LEFT, solution[0].direction)
+        self.assertEqual(EntityType.PENGUIN, solution[0].entity.entity_type)

@@ -1,12 +1,21 @@
+from dataclasses import dataclass
+
 from board import Board
 from enum import Enum, auto
+from entities import Entity, EntityType
 
 
-class Move(Enum):
+class Direction(Enum):
     LEFT = auto()
     UP = auto()
     RIGHT = auto()
     DOWN = auto()
+
+
+@dataclass
+class Move:
+    direction: Direction
+    entity: Entity
 
 
 class Game:
@@ -34,3 +43,6 @@ class Game:
             pass
         if move == move.DOWN:
             pass
+
+    def solve(self):
+        return [Move(direction=Direction.LEFT, entity=Entity(entity_type=EntityType.PENGUIN))]
