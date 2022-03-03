@@ -24,7 +24,7 @@ class Game:
         if entity_location is None:
             return False
         if direction == Direction.LEFT:
-            x = entity_location.x - 1
+            x = entity_location.x - 2
             y = entity_location.y
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
@@ -32,7 +32,7 @@ class Game:
                 x -= 1
             return False
         if direction == Direction.RIGHT:
-            x = entity_location.x + 1
+            x = entity_location.x + 2
             y = entity_location.y
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
@@ -41,7 +41,7 @@ class Game:
             return False
         if direction == Direction.UP:
             x = entity_location.x
-            y = entity_location.y + 1
+            y = entity_location.y + 2
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
                     return True
@@ -49,7 +49,7 @@ class Game:
             return False
         if direction == Direction.DOWN:
             x = entity_location.x
-            y = entity_location.y - 1
+            y = entity_location.y - 2
             while self.board.point_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
                     return True
@@ -78,5 +78,12 @@ class Game:
             self.board.apply_move(m.entity_type, m.direction)
             if self.is_won():
                 return [m]
-            self.board = board_before_move  # revert the move
+            else:
+                solution_moves = self.solve()
+                if solution_moves:
+                    overall_solution = [m]
+                    overall_solution.extend(solution_moves)
+                    return overall_solution
+                else:
+                    self.board = board_before_move  # revert the move
         return []

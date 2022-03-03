@@ -66,6 +66,14 @@ class UnitTests(unittest.TestCase):
         possible_moves = game.get_possible_moves_of(EntityType.PENGUIN)
         self.assertEqual(0, len(possible_moves))
 
+    def test_GetPossibleMovesForEntityIsEmptyIfNeighbourIsBlocker(self):
+        board = Board(width=3, height=1)
+        board.place_entity(EntityType.PENGUIN, 0, 0)
+        board.place_entity(EntityType.BEAR1, 1, 0)
+        game = Game(board)
+        possible_moves = game.get_possible_moves_of(EntityType.PENGUIN)
+        self.assertEqual(0, len(possible_moves))
+
     def test_GetPossibleMovesForEntityReturnsOneIfOnlyOneAvailable(self):
         board = Board(width=3, height=1)
         board.place_entity(EntityType.PENGUIN, 0, 0)
@@ -167,3 +175,17 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(1, len(solution))
         self.assertEqual(Direction.RIGHT, solution[0].direction)
         self.assertEqual(EntityType.PENGUIN, solution[0].entity_type)
+
+    def test_FindSolutionWhenTwoMovesAreNeeded(self):
+        board = Board(width=3, height=3)
+        board.place_entity(EntityType.PENGUIN, 0, 1)
+        board.place_entity(EntityType.WATER, 1, 1)
+        board.place_entity(EntityType.BEAR1, 2, 0)
+        board.place_entity(EntityType.BEAR2, 2, 2)
+        game = Game(board)
+        solution = game.solve()
+        self.assertEqual(2, len(solution))
+        assert solution[0].direction in [Direction.UP, Direction.DOWN]
+        assert solution[0].entity_type in [EntityType.BEAR1, EntityType.BEAR2]
+        self.assertEqual(Direction.RIGHT, solution[1].direction)
+        self.assertEqual(EntityType.PENGUIN, solution[1].entity_type)
