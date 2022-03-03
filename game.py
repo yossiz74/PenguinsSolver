@@ -9,6 +9,9 @@ class Move:
     direction: Direction
     entity_type: EntityType
 
+    def __repr__(self):
+        return f"Move {self.entity_type.name} {self.direction.name}"
+
 
 class Game:
     def __init__(self, board: Board):
