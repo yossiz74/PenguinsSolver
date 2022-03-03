@@ -46,9 +46,9 @@ class Board:
     def point_is_inside_the_board(self, x, y) -> bool:
         return (self.width > x >= 0) and (self.height > y >= 0)
 
-    def there_is_a_bear_in(self, x, y) -> bool:
+    def there_is_a_blocker_entity_in(self, x, y) -> bool:
         e = self._get_entity_in(x, y)
-        return e and e.entity_type in [EntityType.BEAR1, EntityType.BEAR2, EntityType.BEAR3, EntityType.BEAR4]
+        return e and e.entity_type in [EntityType.PENGUIN, EntityType.BEAR1, EntityType.BEAR2, EntityType.BEAR3, EntityType.BEAR4]
 
     def _get_entity_in(self, x, y):
         for entity in self.entities:
