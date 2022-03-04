@@ -18,7 +18,8 @@ class Point:
 
 
 class EntityType(Enum):
-    PENGUIN = auto()
+    PENGUIN1 = auto()
+    PENGUIN2 = auto()
     BEAR1 = auto()
     BEAR2 = auto()
     BEAR3 = auto()
@@ -27,10 +28,20 @@ class EntityType(Enum):
     WATER = auto()
 
 
-@dataclass
-class Entity:
-    entity_type: EntityType
-    location: Point
+class EntityClass(Enum):
+    PENGUIN = auto()
+    BEAR = auto()
+    WATER = auto()
+
+
+def get_entity_class(e: EntityType) -> EntityClass:
+    if e in [EntityType.PENGUIN1, EntityType.PENGUIN2]:
+        return EntityClass.PENGUIN
+    if e in [EntityType.BEAR1, EntityType.BEAR2, EntityType.BEAR3, EntityType.BEAR4, EntityType.BEAR5]:
+        return EntityClass.BEAR
+    if e in [EntityType.WATER]:
+        return EntityClass.WATER
+    raise ValueError(f"Unknown entity type {e}")
 
 
 class Board:
@@ -43,8 +54,8 @@ class Board:
         answer = (self.width == other.width and self.height == other.height)
         for x in range(self.width):
             for y in range(self.height):
-                my_entities = self.get_entities_in_location(x, y)
-                other_entities = other.get_entities_in_location(x, y)
+                my_entities = [get_entity_class(e) for e in self.get_entities_in_location(x, y)]
+                other_entities = [get_entity_class(e) for e in other.get_entities_in_location(x, y)]
                 if Counter(my_entities) != Counter(other_entities):
                     return False
         return answer
@@ -57,9 +68,9 @@ class Board:
                 entities = self.get_entities_in_location(x, y - 1)
                 if entities:
                     for e in entities:
-                        s += e.name[0]
+                        s += e.name[0] + e.name[-1]
                 else:
-                    s += "*"
+                    s += "  "
                 s += "|"
             s += "\n"
         return s
@@ -77,7 +88,7 @@ class Board:
 
     def there_is_a_blocker_entity_in(self, x, y) -> bool:
         entities = self.get_entities_in_location(x, y)
-        return any([e != EntityType.WATER for e in entities])
+        return any([get_entity_class(e) in [EntityClass.PENGUIN, EntityClass.BEAR] for e in entities])
 
     def get_entities_in_location(self, x, y) -> list[EntityType]:
         answer = []

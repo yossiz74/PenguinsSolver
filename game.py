@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from board import Board, EntityType
+from board import Board, EntityType, EntityClass, get_entity_class
 from direction import Direction
 import copy
 
@@ -16,12 +16,12 @@ class Move:
 class Game:
     def __init__(self, board: Board):
         self.board = board
-        self.bad_boards = []
+        self.seen_boards = []
 
     def is_won(self) -> bool:
-        penguin_location = self.board.get_entity_location(EntityType.PENGUIN)
         water_location = self.board.get_entity_location(EntityType.WATER)
-        return penguin_location == water_location
+        entities_in_water_location = self.board.get_entities_in_location(water_location.x, water_location.y)
+        return any([get_entity_class(e) == EntityClass.PENGUIN for e in entities_in_water_location])
 
     def entity_move_is_legal(self, entity_type, direction) -> bool:
         entity_location = self.board.get_entity_location(entity_type)
@@ -78,13 +78,12 @@ class Game:
     def solve(self):
         possible_moves = self.get_all_possible_moves()
         for m in possible_moves:
-            # print(f"Examining: {m}")
             board_before_move = copy.deepcopy(self.board)
             self.board.apply_move(m.entity_type, m.direction)
-            if any([self.board == x for x in self.bad_boards]):
+            if any([self.board == x for x in self.seen_boards]):
                 # already examined this board setup, so just return with failure
                 return []
-            # print(self.board)
+            self.seen_boards.append(copy.deepcopy(self.board))
             if self.is_won():
                 return [m]
             else:
@@ -94,8 +93,5 @@ class Game:
                     overall_solution.extend(solution_moves)
                     return overall_solution
                 else:
-                    # print(f"Reverting {m}")
-                    self.bad_boards.append(self.board)
                     self.board = board_before_move  # revert the move
-                    # print(self.board)
         return []
