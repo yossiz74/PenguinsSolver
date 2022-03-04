@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from board import Board, EntityType, EntityClass, get_entity_class
+from Penguins.board import Board
+from Penguins.entity import EntityType, EntityClass, get_entity_class
 from direction import Direction
 import copy
 
@@ -29,35 +30,35 @@ class Game:
         if entity_location is None:
             return False
         if direction == Direction.LEFT:
-            x = entity_location.x - 1
-            y = entity_location.y
-            while self.board.point_is_inside_the_board(x, y):
+            x = entity_location.col - 1
+            y = entity_location.row
+            while self.board.location_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return x < entity_location.x - 1  # false if there is an immediate blocking neighbour, true if the blocker is farther
+                    return x < entity_location.col - 1  # false if there is an immediate blocking neighbour, true if the blocker is farther
                 x -= 1
             return False
         if direction == Direction.RIGHT:
-            x = entity_location.x + 1
-            y = entity_location.y
-            while self.board.point_is_inside_the_board(x, y):
+            x = entity_location.col + 1
+            y = entity_location.row
+            while self.board.location_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return x > entity_location.x + 1
+                    return x > entity_location.col + 1
                 x += 1
             return False
         if direction == Direction.UP:
-            x = entity_location.x
-            y = entity_location.y + 1
-            while self.board.point_is_inside_the_board(x, y):
+            x = entity_location.col
+            y = entity_location.row + 1
+            while self.board.location_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return y > entity_location.y + 1
+                    return y > entity_location.row + 1
                 y += 1
             return False
         if direction == Direction.DOWN:
-            x = entity_location.x
-            y = entity_location.y - 1
-            while self.board.point_is_inside_the_board(x, y):
+            x = entity_location.col
+            y = entity_location.row - 1
+            while self.board.location_is_inside_the_board(x, y):
                 if self.board.there_is_a_blocker_entity_in(x, y):
-                    return y < entity_location.y - 1
+                    return y < entity_location.row - 1
                 y -= 1
             return False
 

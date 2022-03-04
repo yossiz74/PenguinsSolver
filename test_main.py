@@ -1,18 +1,18 @@
 import unittest
-from board import Board, EntityType, Point
+from Penguins.board import Board, EntityType, Location
 from game import Game
 from direction import Direction
 
 
 class UnitTests(unittest.TestCase):
     def test_GameIsWonWhenThereAreNoPenguinsLeft(self):
-        board = Board(width=1, height=1)
+        board = Board(columns=1, rows=1)
         board.add_new_entity(EntityType.WATER1, 0, 0)
         game = Game(board)
         self.assertTrue(game.is_won())
 
     def test_WhenAPenguinIsOnWaterItIsRemovedFromTheGame(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 2, 0)
         board.add_new_entity(EntityType.WATER1, 0, 0)
         game = Game(board)
@@ -20,7 +20,7 @@ class UnitTests(unittest.TestCase):
         self.assertIsNone(board.get_entity_location(EntityType.PENGUIN1))
 
     def test_GameIsNotWonWhenThereArePenguinsOnBoard(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN2, 1, 0)
         board.add_new_entity(EntityType.WATER1, 2, 0)
         game = Game(board)
@@ -28,33 +28,33 @@ class UnitTests(unittest.TestCase):
 
 
     def test_PointIsInsideTheBoard(self):
-        board = Board(width=2, height=3)
-        self.assertTrue(board.point_is_inside_the_board(0, 0))
-        self.assertTrue(board.point_is_inside_the_board(0, 1))
-        self.assertTrue(board.point_is_inside_the_board(0, 2))
-        self.assertTrue(board.point_is_inside_the_board(1, 0))
-        self.assertTrue(board.point_is_inside_the_board(1, 1))
-        self.assertTrue(board.point_is_inside_the_board(1, 2))
-        self.assertFalse(board.point_is_inside_the_board(-1, 0))
-        self.assertFalse(board.point_is_inside_the_board(2, 0))
-        self.assertFalse(board.point_is_inside_the_board(0, -1))
-        self.assertFalse(board.point_is_inside_the_board(0, 3))
+        board = Board(columns=2, rows=3)
+        self.assertTrue(board.location_is_inside_the_board(0, 0))
+        self.assertTrue(board.location_is_inside_the_board(0, 1))
+        self.assertTrue(board.location_is_inside_the_board(0, 2))
+        self.assertTrue(board.location_is_inside_the_board(1, 0))
+        self.assertTrue(board.location_is_inside_the_board(1, 1))
+        self.assertTrue(board.location_is_inside_the_board(1, 2))
+        self.assertFalse(board.location_is_inside_the_board(-1, 0))
+        self.assertFalse(board.location_is_inside_the_board(2, 0))
+        self.assertFalse(board.location_is_inside_the_board(0, -1))
+        self.assertFalse(board.location_is_inside_the_board(0, 3))
 
     def test_ThereIsABear(self):
-        board = Board(width=3, height=2)
+        board = Board(columns=3, rows=2)
         board.add_new_entity(EntityType.BEAR1, 0, 0)
         self.assertTrue(board.there_is_a_blocker_entity_in(0, 0))
         self.assertFalse(board.there_is_a_blocker_entity_in(0, 1))
         self.assertFalse(board.there_is_a_blocker_entity_in(1, 0))
 
     def test_PenguinMoveIsIllegalIfThereIsNoBearInTheWay(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 2, 0)
         game = Game(board)
         self.assertEqual(False, game.entity_move_is_legal(EntityType.PENGUIN1, Direction.LEFT))  # assertFalse also asserts not returning value at all
 
     def test_BearMoveIsIllegalIfThereIsAPenguinNeighbour(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 0)
         board.add_new_entity(EntityType.BEAR2, 2, 0)
@@ -62,7 +62,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(False, game.entity_move_is_legal(EntityType.BEAR1, Direction.RIGHT))
 
     def test_PenguinMoveIsLegalIfThereIsABearInTheWay(self):
-        board = Board(width=5, height=5)
+        board = Board(columns=5, rows=5)
         board.add_new_entity(EntityType.PENGUIN1, 2, 2)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.add_new_entity(EntityType.BEAR2, 0, 2)
@@ -75,7 +75,7 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(game.entity_move_is_legal(EntityType.PENGUIN1, Direction.DOWN))
 
     def test_GetPossibleMovesForEntityIsEmptyIfNoneAvailable(self):
-        board = Board(width=2, height=2)
+        board = Board(columns=2, rows=2)
         board.add_new_entity(EntityType.PENGUIN1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 1)
         game = Game(board)
@@ -83,7 +83,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(0, len(possible_moves))
 
     def test_GetPossibleMovesForEntityIsEmptyIfNeighbourIsBlocker(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 1, 0)
         game = Game(board)
@@ -91,7 +91,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(0, len(possible_moves))
 
     def test_GetPossibleMovesForEntityReturnsOneIfOnlyOneAvailable(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         game = Game(board)
@@ -100,7 +100,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(Direction.RIGHT, possible_moves[0].direction)
 
     def test_GetPossibleMovesForPenguinReturnsAllIfMultipleAvailable(self):
-        board = Board(width=3, height=3)
+        board = Board(columns=3, rows=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.add_new_entity(EntityType.BEAR2, 0, 2)
@@ -111,7 +111,7 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(Direction.UP in [m.direction for m in possible_moves])
 
     def test_GetPossibleMovesForBearReturnsAllIfMultipleAvailable(self):
-        board = Board(width=3, height=3)
+        board = Board(columns=3, rows=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.add_new_entity(EntityType.BEAR2, 0, 2)
@@ -123,25 +123,25 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(Direction.DOWN in [m.direction for m in possible_moves])
 
     def test_MoveEntitySingleStep(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.apply_move(EntityType.PENGUIN1, Direction.RIGHT)
         loc = board.get_entity_location(EntityType.PENGUIN1)
-        self.assertEqual(Point(1, 0), loc)
+        self.assertEqual(Location(1, 0), loc)
 
     def test_MoveEntityMultipleSteps(self):
-        board = Board(width=4, height=1)
+        board = Board(columns=4, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 3, 0)
         board.apply_move(EntityType.PENGUIN1, Direction.RIGHT)
         loc = board.get_entity_location(EntityType.PENGUIN1)
-        self.assertEqual(2, loc.x)
-        self.assertEqual(0, loc.y)
+        self.assertEqual(2, loc.col)
+        self.assertEqual(0, loc.row)
 
     def test_BoardsAreEqualIfSameSizeAndEntitiesAreInSameLocations(self):
-        board1 = Board(width=3, height=1)
-        board2 = Board(width=3, height=1)
+        board1 = Board(columns=3, rows=1)
+        board2 = Board(columns=3, rows=1)
         self.assertEqual(board1, board2)
         board1.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board1.add_new_entity(EntityType.BEAR1, 2, 0)
@@ -150,8 +150,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(board1, board2)
 
     def test_BoardsAreEqualIfSameSizeAndSameEntityClassesAreInSameLocations(self):
-        board1 = Board(width=3, height=1)
-        board2 = Board(width=3, height=1)
+        board1 = Board(columns=3, rows=1)
+        board2 = Board(columns=3, rows=1)
         self.assertEqual(board1, board2)
         board1.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board1.add_new_entity(EntityType.BEAR1, 2, 0)
@@ -160,8 +160,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(board1, board2)
 
     def test_BoardsAreNotEqualIfSomeLocationIsDifferent(self):
-        board1 = Board(width=3, height=1)
-        board2 = Board(width=3, height=1)
+        board1 = Board(columns=3, rows=1)
+        board2 = Board(columns=3, rows=1)
         self.assertEqual(board1, board2)
         board1.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board1.add_new_entity(EntityType.BEAR1, 2, 0)
@@ -172,7 +172,7 @@ class UnitTests(unittest.TestCase):
 
 class IntegrationTests(unittest.TestCase):
     def test_PossibleMovesListIsEmptyIfThereAreNoPossibleMoves(self):
-        board = Board(width=2, height=2)
+        board = Board(columns=2, rows=2)
         board.add_new_entity(EntityType.PENGUIN1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 1)
         game = Game(board)
@@ -180,7 +180,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(0, len(possible_moves))
 
     def test_ReturnBothPossibleMovesIfThereIsAGapBetweenPenguinAndBear(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         game = Game(board)
@@ -199,7 +199,7 @@ class IntegrationTests(unittest.TestCase):
 
 class EndToEndTests(unittest.TestCase):
     def test_GetWinningMoveIfThereIsJustOneOption(self):
-        board = Board(width=3, height=1)
+        board = Board(columns=3, rows=1)
         board.add_new_entity(EntityType.PENGUIN1, 2, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 0)
         board.add_new_entity(EntityType.WATER1, 1, 0)
@@ -210,7 +210,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(EntityType.PENGUIN1, solution[0].entity_type)
 
     def test_GetWinningMoveIfThereAreTwoOption(self):
-        board = Board(width=3, height=3)
+        board = Board(columns=3, rows=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.WATER1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
@@ -222,7 +222,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(EntityType.PENGUIN1, solution[0].entity_type)
 
     def test_FindSolutionWhenTwoMovesAreNeeded(self):
-        board = Board(width=3, height=3)
+        board = Board(columns=3, rows=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 1)
         board.add_new_entity(EntityType.WATER1, 1, 1)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
