@@ -1,6 +1,6 @@
 from collections import Counter
 from enum import Enum, auto
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
 from direction import Direction
 
@@ -75,8 +75,20 @@ class Board:
             s += "\n"
         return s
 
-    def place_entity(self, entity_type: EntityType, x: int, y: int):
+    def add_new_entity(self, entity_type: EntityType, x: int, y: int):
+        if entity_type in self.entities.keys():
+            raise KeyError(f"Trying to add an already existing entity {entity_type}")
         self.entities[entity_type] = Point(x, y)
+
+    def move_entity(self, entity_type: EntityType, x: int, y: int):
+        if entity_type not in self.entities.keys():
+            raise KeyError(f"Trying to move a non-existing entity {entity_type}")
+        self.entities[entity_type] = Point(x, y)
+        # if a penguin reaches the water, it dives into it
+        if get_entity_class(entity_type) == EntityClass.PENGUIN:
+            water_location = self.get_entity_location(EntityType.WATER)
+            if water_location and self.entities[entity_type] == water_location:
+                self.entities.pop(entity_type)
 
     def get_entity_location(self, entity_type: EntityType) -> Point:
         for et in self.entities.keys():
@@ -105,25 +117,25 @@ class Board:
                 p.x += 1
                 if not self.point_is_inside_the_board(p.x, p.y):
                     raise ValueError(f"{entity_type} went overboard")
-            self.place_entity(entity_type, p.x, p.y)
+            self.move_entity(entity_type, p.x, p.y)
         if direction == Direction.LEFT:
             p = self.get_entity_location(entity_type)
             while not self.there_is_a_blocker_entity_in(p.x - 1, p.y):
                 p.x -= 1
                 if not self.point_is_inside_the_board(p.x, p.y):
                     raise ValueError(f"{entity_type} went overboard")
-            self.place_entity(entity_type, p.x, p.y)
+            self.move_entity(entity_type, p.x, p.y)
         if direction == Direction.UP:
             p = self.get_entity_location(entity_type)
             while not self.there_is_a_blocker_entity_in(p.x, p.y + 1):
                 p.y += 1
                 if not self.point_is_inside_the_board(p.x, p.y):
                     raise ValueError(f"{entity_type} went overboard")
-            self.place_entity(entity_type, p.x, p.y)
+            self.move_entity(entity_type, p.x, p.y)
         if direction == Direction.DOWN:
             p = self.get_entity_location(entity_type)
             while not self.there_is_a_blocker_entity_in(p.x, p.y - 1):
                 p.y -= 1
                 if not self.point_is_inside_the_board(p.x, p.y):
                     raise ValueError(f"{entity_type} went overboard")
-            self.place_entity(entity_type, p.x, p.y)
+            self.move_entity(entity_type, p.x, p.y)

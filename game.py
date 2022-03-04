@@ -17,11 +17,18 @@ class Game:
     def __init__(self, board: Board):
         self.board = board
         self.seen_boards = []
+        self.search_tree_level = 0
 
     def is_won(self) -> bool:
+        answer = True
         water_location = self.board.get_entity_location(EntityType.WATER)
-        entities_in_water_location = self.board.get_entities_in_location(water_location.x, water_location.y)
-        return any([get_entity_class(e) == EntityClass.PENGUIN for e in entities_in_water_location])
+        p1_location = self.board.get_entity_location(EntityType.PENGUIN1)
+        p2_location = self.board.get_entity_location(EntityType.PENGUIN2)
+        if p1_location:
+            answer = answer and (water_location == p1_location)
+        if p2_location:
+            answer = answer and (water_location == p2_location)
+        return answer
 
     def entity_move_is_legal(self, entity_type, direction) -> bool:
         entity_location = self.board.get_entity_location(entity_type)
@@ -77,21 +84,30 @@ class Game:
 
     def solve(self):
         possible_moves = self.get_all_possible_moves()
+        # print(f"[{self.search_tree_level}] {possible_moves}")
         for m in possible_moves:
             board_before_move = copy.deepcopy(self.board)
             self.board.apply_move(m.entity_type, m.direction)
             if any([self.board == x for x in self.seen_boards]):
-                # already examined this board setup, so just return with failure
-                return []
+                # already examined this board setup, so no point of further examinations of this move
+                # print("Already seen this board")
+                self.board = board_before_move  # revert the move
+                continue
+            # print(board_before_move)
+            # print(f"[{self.search_tree_level}] applied {m}")
+            # print(self.board)
             self.seen_boards.append(copy.deepcopy(self.board))
             if self.is_won():
                 return [m]
             else:
+                self.search_tree_level += 1
                 solution_moves = self.solve()
+                self.search_tree_level -= 1
                 if solution_moves:
                     overall_solution = [m]
                     overall_solution.extend(solution_moves)
                     return overall_solution
                 else:
                     self.board = board_before_move  # revert the move
+                    # print(f"[{self.search_tree_level}] Backtracking {m}")
         return []
