@@ -7,14 +7,14 @@ from direction import Direction
 class UnitTests(unittest.TestCase):
     def test_GameIsWonWhenThereAreNoPenguinsLeft(self):
         board = Board(width=1, height=1)
-        board.add_new_entity(EntityType.WATER, 0, 0)
+        board.add_new_entity(EntityType.WATER1, 0, 0)
         game = Game(board)
         self.assertTrue(game.is_won())
 
     def test_WhenAPenguinIsOnWaterItIsRemovedFromTheGame(self):
         board = Board(width=3, height=1)
         board.add_new_entity(EntityType.PENGUIN1, 2, 0)
-        board.add_new_entity(EntityType.WATER, 0, 0)
+        board.add_new_entity(EntityType.WATER1, 0, 0)
         game = Game(board)
         board.move_entity(EntityType.PENGUIN1, 0, 0)
         self.assertIsNone(board.get_entity_location(EntityType.PENGUIN1))
@@ -22,7 +22,7 @@ class UnitTests(unittest.TestCase):
     def test_GameIsNotWonWhenThereArePenguinsOnBoard(self):
         board = Board(width=3, height=1)
         board.add_new_entity(EntityType.PENGUIN2, 1, 0)
-        board.add_new_entity(EntityType.WATER, 2, 0)
+        board.add_new_entity(EntityType.WATER1, 2, 0)
         game = Game(board)
         self.assertFalse(game.is_won())
 
@@ -202,7 +202,7 @@ class EndToEndTests(unittest.TestCase):
         board = Board(width=3, height=1)
         board.add_new_entity(EntityType.PENGUIN1, 2, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 0)
-        board.add_new_entity(EntityType.WATER, 1, 0)
+        board.add_new_entity(EntityType.WATER1, 1, 0)
         game = Game(board)
         solution = game.solve()
         self.assertEqual(1, len(solution))
@@ -212,7 +212,7 @@ class EndToEndTests(unittest.TestCase):
     def test_GetWinningMoveIfThereAreTwoOption(self):
         board = Board(width=3, height=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
-        board.add_new_entity(EntityType.WATER, 1, 0)
+        board.add_new_entity(EntityType.WATER1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.add_new_entity(EntityType.BEAR2, 0, 2)
         game = Game(board)
@@ -224,7 +224,7 @@ class EndToEndTests(unittest.TestCase):
     def test_FindSolutionWhenTwoMovesAreNeeded(self):
         board = Board(width=3, height=3)
         board.add_new_entity(EntityType.PENGUIN1, 0, 1)
-        board.add_new_entity(EntityType.WATER, 1, 1)
+        board.add_new_entity(EntityType.WATER1, 1, 1)
         board.add_new_entity(EntityType.BEAR1, 2, 0)
         board.add_new_entity(EntityType.BEAR2, 2, 2)
         game = Game(board)
@@ -238,7 +238,7 @@ class EndToEndTests(unittest.TestCase):
     def test_FindSolutionWhenManyMovesAreNeeded(self):
         board = Board(5, 5)
         board.add_new_entity(EntityType.PENGUIN1, 0, 2)
-        board.add_new_entity(EntityType.WATER, 2, 2)
+        board.add_new_entity(EntityType.WATER1, 2, 2)
         board.add_new_entity(EntityType.BEAR1, 0, 0)
         board.add_new_entity(EntityType.BEAR2, 1, 2)
         board.add_new_entity(EntityType.BEAR3, 2, 0)
@@ -248,11 +248,13 @@ class EndToEndTests(unittest.TestCase):
         solution = game.solve()
         self.assertTrue(game.is_won())
 
+    @unittest.skip
     def test_FindSolutionWithMultiplePenguins(self):
+        # takes long time to run
         board = Board(5, 5)
         board.add_new_entity(EntityType.PENGUIN1, 0, 0)
         board.add_new_entity(EntityType.PENGUIN2, 0, 2)
-        board.add_new_entity(EntityType.WATER, 2, 2)
+        board.add_new_entity(EntityType.WATER1, 2, 2)
         board.add_new_entity(EntityType.BEAR1, 0, 1)
         board.add_new_entity(EntityType.BEAR2, 0, 3)
         board.add_new_entity(EntityType.BEAR3, 0, 4)
@@ -262,11 +264,10 @@ class EndToEndTests(unittest.TestCase):
         solution = game.solve()
         self.assertTrue(game.is_won())
 
-    @unittest.skip
     def test_FindSolutionWithMultipleWaters(self):
         board = Board(5, 5)
-        # board.add_new_entity(EntityType.WATER1, 2, 1)
-        # board.add_new_entity(EntityType.WATER2, 3, 1)
+        board.add_new_entity(EntityType.WATER1, 2, 1)
+        board.add_new_entity(EntityType.WATER2, 3, 1)
         board.add_new_entity(EntityType.PENGUIN1, 1, 0)
         board.add_new_entity(EntityType.BEAR1, 0, 3)
         board.add_new_entity(EntityType.BEAR2, 2, 0)

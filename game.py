@@ -20,15 +20,9 @@ class Game:
         self.search_tree_level = 0
 
     def is_won(self) -> bool:
-        answer = True
-        water_location = self.board.get_entity_location(EntityType.WATER)
         p1_location = self.board.get_entity_location(EntityType.PENGUIN1)
         p2_location = self.board.get_entity_location(EntityType.PENGUIN2)
-        if p1_location:
-            answer = answer and (water_location == p1_location)
-        if p2_location:
-            answer = answer and (water_location == p2_location)
-        return answer
+        return p1_location is None and p2_location is None
 
     def entity_move_is_legal(self, entity_type, direction) -> bool:
         entity_location = self.board.get_entity_location(entity_type)
@@ -70,7 +64,7 @@ class Game:
     def get_all_possible_moves(self) -> list[Move]:
         possible_moves = []
         for et in EntityType:
-            if et != EntityType.WATER:
+            if get_entity_class(et) != EntityClass.WATER:
                 entity_possible_moves = self.get_possible_moves_of(et)
                 possible_moves.extend(entity_possible_moves)
         return possible_moves

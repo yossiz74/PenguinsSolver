@@ -25,7 +25,9 @@ class EntityType(Enum):
     BEAR3 = auto()
     BEAR4 = auto()
     BEAR5 = auto()
-    WATER = auto()
+    BEAR6 = auto()
+    WATER1 = auto()
+    WATER2 = auto()
 
 
 class EntityClass(Enum):
@@ -37,9 +39,9 @@ class EntityClass(Enum):
 def get_entity_class(e: EntityType) -> EntityClass:
     if e in [EntityType.PENGUIN1, EntityType.PENGUIN2]:
         return EntityClass.PENGUIN
-    if e in [EntityType.BEAR1, EntityType.BEAR2, EntityType.BEAR3, EntityType.BEAR4, EntityType.BEAR5]:
+    if e in [EntityType.BEAR1, EntityType.BEAR2, EntityType.BEAR3, EntityType.BEAR4, EntityType.BEAR5, EntityType.BEAR6]:
         return EntityClass.BEAR
-    if e in [EntityType.WATER]:
+    if e in [EntityType.WATER1, EntityType.WATER2]:
         return EntityClass.WATER
     raise ValueError(f"Unknown entity type {e}")
 
@@ -86,8 +88,7 @@ class Board:
         self.entities[entity_type] = Point(x, y)
         # if a penguin reaches the water, it dives into it
         if get_entity_class(entity_type) == EntityClass.PENGUIN:
-            water_location = self.get_entity_location(EntityType.WATER)
-            if water_location and self.entities[entity_type] == water_location:
+            if any([get_entity_class(e) == EntityClass.WATER for e in self.get_entities_in_location(x, y)]):
                 self.entities.pop(entity_type)
 
     def get_entity_location(self, entity_type: EntityType) -> Point:
