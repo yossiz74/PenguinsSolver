@@ -1,9 +1,10 @@
 import pygame.draw
 from enum import Enum, auto
-from Penguins.constants import SQUARE_SIZE, BLACK, WHITE, BLUE, GREY, ROWS
+from Penguins.constants import SQUARE_SIZE, BLACK, WHITE, BLUE, GREY, LIGHT_BLUE, ROWS
 
 
 class EntityType(Enum):
+    NONE = auto()
     PENGUIN1 = auto()
     PENGUIN2 = auto()
     BEAR1 = auto()
@@ -20,6 +21,7 @@ class EntityClass(Enum):
     PENGUIN = auto()
     BEAR = auto()
     WATER = auto()
+    NONE = auto()
 
 
 def get_entity_class(e: EntityType) -> EntityClass:
@@ -29,6 +31,8 @@ def get_entity_class(e: EntityType) -> EntityClass:
         return EntityClass.BEAR
     if e in [EntityType.WATER1, EntityType.WATER2]:
         return EntityClass.WATER
+    if e == EntityType.NONE:
+        return EntityClass.NONE
     raise ValueError(f"Unknown entity type {e}")
 
 
@@ -67,6 +71,8 @@ class Entity:
             return WHITE
         if ec == EntityClass.PENGUIN:
             return BLACK
+        if ec == EntityClass.NONE:
+            return LIGHT_BLUE
         raise ValueError(f"Unknown entity class {ec}")
 
     def __repr__(self):

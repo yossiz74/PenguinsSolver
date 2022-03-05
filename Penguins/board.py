@@ -52,7 +52,7 @@ class Board:
         return s
 
     def add_new_entity(self, entity_type: EntityType, col: int, row: int):
-        if entity_type in [e.entity_type for e in self.entities]:
+        if entity_type != EntityType.NONE and entity_type in [e.entity_type for e in self.entities]:
             raise KeyError(f"Trying to add an already existing entity {entity_type}")
         self.entities.append(Entity(row=row, col=col, entity_type=entity_type))
 
@@ -120,8 +120,8 @@ class Board:
                     raise ValueError(f"{entity_type} went overboard")
             self.move_entity(entity_type, p.col, p.row)
 
-    def draw_board(self, win):
-        win.fill(LIGHT_BLUE)
+    def draw(self, win):
+        pygame.draw.rect(win, LIGHT_BLUE, (0, 0, self.columns * SQUARE_SIZE, self.rows * SQUARE_SIZE))
         for row in range(self.rows):
             for col in range(self.columns):
                 pygame.draw.rect(win, BLACK, (row*SQUARE_SIZE, col*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 1)

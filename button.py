@@ -15,6 +15,10 @@ class Button:
         self.text = text
         self.visible = visible
 
+    def set_position(self, left, top):
+        self.left = left
+        self.top = top
+
     def draw(self, win: pygame.Surface):
         if not self.visible:
             return
