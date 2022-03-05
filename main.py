@@ -48,7 +48,9 @@ def mainloop(game: Game):
                     move: Move = solution[current_move_index]
                     board.apply_move(move.entity, move.direction)
                     current_move_index += 1
-                    buttons['Next'].visible = current_move_index < len(solution)
+                    if current_move_index >= len(solution):
+                        buttons['Next'].visible = False
+                        buttons['Done'].visible = True
                 if waiting_for_click_on_board:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     col, row = calc_location(mouse_x, mouse_y)
@@ -74,6 +76,8 @@ def mainloop(game: Game):
                     buttons['Penguin'].visible = False
                     buttons['Bear'].visible = False
                     waiting_for_click_on_board = True
+                if buttons['Done'].mouse_inside_button():
+                    run = False
         board.draw(WIN)
         pygame.draw.rect(WIN, BLACK, (0, ROWS * SQUARE_SIZE, WIDTH, SQUARE_SIZE * 2))
         for b in buttons.values():
@@ -118,6 +122,12 @@ def create_buttons():
         left=3 * WIDTH / 4 - BUTTON_WIDTH / 2,
         top=button_top + 50,
         text='Bear',
+        visible=False
+    )
+    buttons['Done'] = Button(
+        left= WIDTH / 4 - BUTTON_WIDTH / 2,
+        top=button_top,
+        text='Done',
         visible=False
     )
     return buttons
