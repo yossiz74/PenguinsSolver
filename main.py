@@ -1,8 +1,9 @@
 from Penguins.board import Board, EntityType
 from game import Game
 import pygame
-from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS
+from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from copy import deepcopy
+from button import Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -11,27 +12,35 @@ pygame.display.set_caption('Penguins')
 
 def mainloop(game: Game):
     run = True
+    pygame.init()
     clock = pygame.time.Clock()
     board = game.board
+    solve_button = Button(
+        left=WIDTH / 2 - BUTTON_WIDTH / 2,
+        top=ROWS * SQUARE_SIZE + SQUARE_SIZE / 2 - BUTTON_HEIGHT / 2,
+        text='Solve'
+    )
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # TODO if on solve button:
-                board = deepcopy(game.board)
-                solution = game.solve()
-                if solution:
-                    print("Solution:")
-                    for move in solution:
-                        print(move)
-                else:
-                    print("No solution found :(")
-                    run = False
+                if solve_button.mouse_inside_button():
+                    board = deepcopy(game.board)
+                    solution = game.solve()
+                    if solution:
+                        print("Solution:")
+                        for move in solution:
+                            print(move)
+                    else:
+                        print("No solution found :(")
+                        run = False
                 # TODO if on next button: apply next move
                 pass
         board.draw_board(WIN)
+        pygame.draw.rect(WIN, BLACK, (0, ROWS * SQUARE_SIZE, WIDTH, SQUARE_SIZE))
+        solve_button.draw(WIN)
         pygame.display.update()
     pygame.quit()
 
