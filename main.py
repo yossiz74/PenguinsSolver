@@ -1,5 +1,6 @@
-from Penguins.board import Board, EntityType
-from game import Game
+from Penguins.board import Board
+from Penguins.entity import EntityClass
+from game import Game, Move
 import pygame
 from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from copy import deepcopy
@@ -30,8 +31,6 @@ def mainloop(game: Game):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if buttons['Solve'].mouse_inside_button():
                     waiting_for_click_on_board = False
-                    board = deepcopy(game.board)
-                    print(board)
                     solution = game.solve()
                     if solution:
                         buttons['Next'].visible = True
@@ -39,12 +38,15 @@ def mainloop(game: Game):
                         print("Solution:")
                         for move in solution:
                             print(move)
+                        # reverts the moves so we can present the original board
+                        for move in reversed(solution):
+                            game.revert_move(move)
                     else:
                         print("No solution found :(")
                         run = False
                 if buttons['Next'].mouse_inside_button():
-                    move = solution[current_move_index]
-                    board.apply_move(move.entity_type, move.direction)
+                    move: Move = solution[current_move_index]
+                    board.apply_move(move.entity, move.direction)
                     current_move_index += 1
                     buttons['Next'].visible = current_move_index < len(solution)
                 if waiting_for_click_on_board:
@@ -59,13 +61,13 @@ def mainloop(game: Game):
                         buttons['Bear'].visible = True
                         waiting_for_click_on_board = False
                 if buttons['Water'].mouse_inside_button():
-                    board.add_new_entity(EntityType.WATER1, col, row)
+                    board.add_new_entity(EntityClass.WATER, col, row)
                     some_entity_was_selected = True
                 if buttons['Penguin'].mouse_inside_button():
-                    board.add_new_entity(EntityType.PENGUIN1, col, row)
+                    board.add_new_entity(EntityClass.PENGUIN, col, row)
                     some_entity_was_selected = True
                 if buttons['Bear'].mouse_inside_button():
-                    board.add_new_entity(EntityType.BEAR1, col, row)
+                    board.add_new_entity(EntityClass.BEAR, col, row)
                     some_entity_was_selected = True
                 if some_entity_was_selected:
                     buttons['Water'].visible = False
@@ -124,14 +126,14 @@ def create_buttons():
 def create_board(sample_board=False):
     board = Board(rows=ROWS, columns=COLS)
     if sample_board:
-        board.add_new_entity(EntityType.PENGUIN1, 4, 4)
-        board.add_new_entity(EntityType.WATER1, 2, 2)
-        board.add_new_entity(EntityType.BEAR1, 0, 3)
-        board.add_new_entity(EntityType.BEAR2, 1, 1)
-        board.add_new_entity(EntityType.BEAR3, 2, 4)
-        board.add_new_entity(EntityType.BEAR4, 3, 4)
-        board.add_new_entity(EntityType.BEAR5, 4, 0)
-        board.add_new_entity(EntityType.BEAR6, 4, 3)
+        board.add_new_entity(EntityClass.PENGUIN, 4, 4)
+        board.add_new_entity(EntityClass.WATER, 2, 2)
+        board.add_new_entity(EntityClass.BEAR, 0, 3)
+        board.add_new_entity(EntityClass.BEAR, 1, 1)
+        board.add_new_entity(EntityClass.BEAR, 2, 4)
+        board.add_new_entity(EntityClass.BEAR, 3, 4)
+        board.add_new_entity(EntityClass.BEAR, 4, 0)
+        board.add_new_entity(EntityClass.BEAR, 4, 3)
     return board
 
 

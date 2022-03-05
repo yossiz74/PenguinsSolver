@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from Penguins.board import Board
-from Penguins.entity import EntityType, EntityClass, get_entity_class
+from Penguins.entity import Entity, EntityClass
 from direction import Direction
 import copy
 
@@ -8,25 +8,25 @@ import copy
 @dataclass
 class Move:
     direction: Direction
-    entity_type: EntityType
+    entity: Entity
+    original_location = None
 
     def __repr__(self):
-        return f"Move {self.entity_type.name} {self.direction.name}"
+        return f"Move {self.entity.name} {self.direction.name}"
 
 
 class Game:
     def __init__(self, board: Board):
         self.board = board
-        self.seen_boards = []
+        self.seen_configuration = []
         self.search_tree_level = 0
 
     def is_won(self) -> bool:
-        p1_location = self.board.get_entity_location(EntityType.PENGUIN1)
-        p2_location = self.board.get_entity_location(EntityType.PENGUIN2)
-        return p1_location is None and p2_location is None
+        penguins = self.board.get_all_entities_of_class(EntityClass.PENGUIN)
+        return len(penguins) == 0
 
-    def entity_move_is_legal(self, entity_type, direction) -> bool:
-        entity_location = self.board.get_entity_location(entity_type)
+    def entity_move_is_legal(self, entity: Entity, direction) -> bool:
+        entity_location = self.board.get_entity_location(entity)
         if entity_location is None:
             return False
         if direction == Direction.LEFT:
@@ -64,34 +64,33 @@ class Game:
 
     def get_all_possible_moves(self) -> list[Move]:
         possible_moves = []
-        for et in EntityType:
-            if get_entity_class(et) != EntityClass.WATER:
-                entity_possible_moves = self.get_possible_moves_of(et)
+        for e in self.board.entities:
+            if e.entity_class != EntityClass.WATER:
+                entity_possible_moves = self.get_possible_moves_of(e)
                 possible_moves.extend(entity_possible_moves)
         return possible_moves
 
-    def get_possible_moves_of(self, entity_type) -> list[Move]:
+    def get_possible_moves_of(self, entity: Entity) -> list[Move]:
         possible_moves = []
         for d in Direction:
-            if self.entity_move_is_legal(entity_type, d):
-                possible_moves.append(Move(entity_type=entity_type, direction=d))
+            if self.entity_move_is_legal(entity, d):
+                possible_moves.append(Move(entity=entity, direction=d))
         return possible_moves
 
     def solve(self):
         possible_moves = self.get_all_possible_moves()
         # print(f"[{self.search_tree_level}] {possible_moves}")
         for m in possible_moves:
-            board_before_move = copy.deepcopy(self.board)
-            self.board.apply_move(m.entity_type, m.direction)
-            if any([self.board == x for x in self.seen_boards]):
+            self.perform_move(m)
+            if any([self.board == x for x in self.seen_configuration]):
                 # already examined this board setup, so no point of further examinations of this move
                 # print("Already seen this board")
-                self.board = board_before_move  # revert the move
+                self.revert_move(m)
                 continue
             # print(board_before_move)
             # print(f"[{self.search_tree_level}] applied {m}")
             # print(self.board)
-            self.seen_boards.append(copy.deepcopy(self.board))
+            self.seen_configuration.append(copy.deepcopy(self.board))
             if self.is_won():
                 return [m]
             else:
@@ -103,6 +102,14 @@ class Game:
                     overall_solution.extend(solution_moves)
                     return overall_solution
                 else:
-                    self.board = board_before_move  # revert the move
+                    self.revert_move(m)
                     # print(f"[{self.search_tree_level}] Backtracking {m}")
         return []
+
+    def perform_move(self, move: Move):
+        move.original_location = self.board.apply_move(move.entity, move.direction)
+
+    def revert_move(self, move):
+        move.entity.move(col=move.original_location.col, row=move.original_location.row)
+        if move.entity not in self.board.entities:  # dived penguin
+            self.board.entities.append(move.entity)
