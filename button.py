@@ -9,12 +9,15 @@ BUTTON_DARK_SHADE = (100, 100, 100)
 
 
 class Button:
-    def __init__(self, left, top, text):
+    def __init__(self, left, top, text, visible=True):
         self.left = left
         self.top = top
         self.text = text
+        self.visible = visible
 
     def draw(self, win: pygame.Surface):
+        if not self.visible:
+            return
         small_font = pygame.font.SysFont('Arial', 35)
         text_render = small_font.render(self.text, True, WHITE)
         # if mouse is hovered on a button it changes to lighter shade
@@ -26,5 +29,7 @@ class Button:
         win.blit(text_render, (self.left + 36, self.top))
 
     def mouse_inside_button(self) -> bool:
+        if not self.visible:
+            return False
         mouse = pygame.mouse.get_pos()
         return self.left <= mouse[0] <= self.left + BUTTON_WIDTH and self.top <= mouse[1] <= self.top + BUTTON_HEIGHT

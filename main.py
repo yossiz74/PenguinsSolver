@@ -15,11 +15,21 @@ def mainloop(game: Game):
     pygame.init()
     clock = pygame.time.Clock()
     board = game.board
+    # create the buttons
+    button_top = ROWS * SQUARE_SIZE + SQUARE_SIZE / 2 - BUTTON_HEIGHT / 2
     solve_button = Button(
-        left=WIDTH / 2 - BUTTON_WIDTH / 2,
-        top=ROWS * SQUARE_SIZE + SQUARE_SIZE / 2 - BUTTON_HEIGHT / 2,
+        left=WIDTH / 4 - BUTTON_WIDTH / 2,
+        top=button_top,
         text='Solve'
     )
+    next_button = Button(
+        left=3*WIDTH / 4 - BUTTON_WIDTH / 2,
+        top=button_top,
+        text='Next',
+        visible=False
+    )
+    solution = None
+    current_move_index = 0
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -30,17 +40,23 @@ def mainloop(game: Game):
                     board = deepcopy(game.board)
                     solution = game.solve()
                     if solution:
+                        next_button.visible = True
+                        solve_button.visible = False
                         print("Solution:")
                         for move in solution:
                             print(move)
                     else:
                         print("No solution found :(")
                         run = False
-                # TODO if on next button: apply next move
-                pass
+                if next_button.mouse_inside_button():
+                    move = solution[current_move_index]
+                    board.apply_move(move.entity_type, move.direction)
+                    current_move_index += 1
+                    next_button.visible = current_move_index < len(solution)
         board.draw_board(WIN)
         pygame.draw.rect(WIN, BLACK, (0, ROWS * SQUARE_SIZE, WIDTH, SQUARE_SIZE))
         solve_button.draw(WIN)
+        next_button.draw(WIN)
         pygame.display.update()
     pygame.quit()
 
