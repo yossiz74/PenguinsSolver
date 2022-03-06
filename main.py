@@ -96,7 +96,7 @@ def mainloop(game: Game):
 
 def calc_location(mouse_x, mouse_y):
     col = mouse_x // SQUARE_SIZE
-    row = ROWS - 1 - mouse_y // SQUARE_SIZE
+    row = mouse_y // SQUARE_SIZE
     return col, row
 
 

@@ -30,7 +30,7 @@ class Entity:
 
     def calc_pos(self):
         self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2
-        self.y = SQUARE_SIZE * (ROWS - 1 - self.row) + SQUARE_SIZE // 2
+        self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2
 
     def move(self, row, col):
         self.row = row

@@ -40,7 +40,7 @@ class Board:
 
     def __repr__(self):
         s = ""
-        for row in range(self.rows, 0, -1):
+        for row in range(self.rows):
             for col in range(self.columns):
                 s += "|"
                 entities = self.get_entities_in_location(col, row - 1)
