@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from Penguins.board import Board
 from Penguins.entity import Entity, EntityClass
-from direction import Direction
+from Penguins.direction import Direction
 import copy
 
 

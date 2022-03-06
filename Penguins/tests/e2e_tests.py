@@ -2,8 +2,8 @@ import unittest
 
 from Penguins.board import Board
 from Penguins.entity import EntityClass
-from direction import Direction
-from game import Game
+from Penguins.direction import Direction
+from Penguins.game import Game
 
 
 class EndToEndTests(unittest.TestCase):
@@ -58,7 +58,6 @@ class EndToEndTests(unittest.TestCase):
         game.solve()
         self.assertTrue(game.is_won())
 
-    @unittest.skip
     def test_FindSolutionWithMultiplePenguins(self):
         # takes long time to run
         board = Board(5, 5)

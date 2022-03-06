@@ -1,8 +1,8 @@
 import unittest
 from Penguins.board import Board, Location
 from Penguins.entity import EntityClass
-from game import Game, Move
-from direction import Direction
+from Penguins.game import Game, Move
+from Penguins.direction import Direction
 
 
 class BoardTests(unittest.TestCase):

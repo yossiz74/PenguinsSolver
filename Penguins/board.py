@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import pygame
 
 from Penguins.constants import SQUARE_SIZE, BLACK, LIGHT_BLUE
-from direction import Direction
+from Penguins.direction import Direction
 from Penguins.entity import Entity, EntityClass
 
 
