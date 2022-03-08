@@ -179,7 +179,7 @@ class GameTests(unittest.TestCase):
         possible_moves = game.get_possible_moves_of(p1)
         self.assertEqual(2, len(possible_moves))
         self.assertTrue(Direction.RIGHT in [m.direction for m in possible_moves])
-        self.assertTrue(Direction.UP in [m.direction for m in possible_moves])
+        self.assertTrue(Direction.DOWN in [m.direction for m in possible_moves])
 
     def test_GetPossibleMovesForBearReturnsAllIfMultipleAvailable(self):
         board = Board(columns=3, rows=3)
@@ -191,7 +191,7 @@ class GameTests(unittest.TestCase):
         possible_moves = game.get_possible_moves_of(b1)
         self.assertEqual(2, len(possible_moves))
         self.assertTrue(Direction.LEFT in [m.direction for m in possible_moves])
-        self.assertTrue(Direction.DOWN in [m.direction for m in possible_moves])
+        self.assertTrue(Direction.UP in [m.direction for m in possible_moves])
 
     def test_PossibleMovesListIsEmptyIfThereAreNoPossibleMoves(self):
         board = Board(columns=2, rows=2)

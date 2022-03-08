@@ -45,7 +45,7 @@ class Game:
                     return x > entity_location.col + 1
                 x += 1
             return False
-        if direction == Direction.UP:
+        if direction == Direction.DOWN:
             x = entity_location.col
             y = entity_location.row + 1
             while self.board.location_is_inside_the_board(x, y):
@@ -53,7 +53,7 @@ class Game:
                     return y > entity_location.row + 1
                 y += 1
             return False
-        if direction == Direction.DOWN:
+        if direction == Direction.UP:
             x = entity_location.col
             y = entity_location.row - 1
             while self.board.location_is_inside_the_board(x, y):

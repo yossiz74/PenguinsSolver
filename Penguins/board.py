@@ -95,10 +95,10 @@ class Board:
         if direction == Direction.LEFT:
             while not self.there_is_a_blocker_entity_in(col - 1, row):
                 col -= 1
-        if direction == Direction.UP:
+        if direction == Direction.DOWN:
             while not self.there_is_a_blocker_entity_in(col, row + 1):
                 row += 1
-        if direction == Direction.DOWN:
+        if direction == Direction.UP:
             while not self.there_is_a_blocker_entity_in(col, row - 1):
                 row -= 1
         self.move_entity(entity, col, row)
