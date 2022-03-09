@@ -20,6 +20,8 @@ class Game:
         self.board = board
         self.seen_configuration = []
         self.search_tree_level = 0
+        self.current_path = []
+        self.shortest_solution = []
 
     def is_won(self) -> bool:
         penguins = self.board.get_all_entities_of_class(EntityClass.PENGUIN)
@@ -78,6 +80,12 @@ class Game:
         return possible_moves
 
     def solve(self):
+        self.current_path = []
+        self.shortest_solution = []
+        self.recursive_solve()
+        return self.shortest_solution
+
+    def recursive_solve(self):
         possible_moves = self.get_all_possible_moves()
         # print(f"[{self.search_tree_level}] {possible_moves}")
         for m in possible_moves:
@@ -92,24 +100,22 @@ class Game:
             # print(self.board)
             self.seen_configuration.append(copy.deepcopy(self.board))
             if self.is_won():
-                return [m]
+                self.shortest_solution = self.current_path.copy()
             else:
-                self.search_tree_level += 1
-                solution_moves = self.solve()
-                self.search_tree_level -= 1
-                if solution_moves:
-                    overall_solution = [m]
-                    overall_solution.extend(solution_moves)
-                    return overall_solution
-                else:
-                    self.revert_move(m)
-                    # print(f"[{self.search_tree_level}] Backtracking {m}")
-        return []
+                # no point of going down this branch if it's already longer than the currently found solution
+                if not self.shortest_solution or self.search_tree_level < len(self.shortest_solution) - 1:
+                    self.search_tree_level += 1
+                    self.recursive_solve()
+                    self.search_tree_level -= 1
+            self.revert_move(m)
+            # print(f"[{self.search_tree_level}] Backtracking {m}")
 
     def perform_move(self, move: Move):
         move.original_location = self.board.apply_move(move.entity, move.direction)
+        self.current_path.append(move)
 
     def revert_move(self, move):
         move.entity.move(col=move.original_location.col, row=move.original_location.row)
         if move.entity not in self.board.entities:  # dived penguin
             self.board.entities.append(move.entity)
+        self.current_path.pop()

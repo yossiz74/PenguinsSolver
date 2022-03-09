@@ -43,7 +43,7 @@ class Board:
         for row in range(self.rows):
             for col in range(self.columns):
                 s += "|"
-                entities = self.get_entities_in_location(col, row - 1)
+                entities = self.get_entities_in_location(col, row)
                 if entities:
                     for e in entities:
                         s += e.name[0] + e.name[-1]

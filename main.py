@@ -5,7 +5,7 @@ import pygame
 from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from button import Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
-VERSION = "1.0.3"
+VERSION = "1.1.0"
 
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))

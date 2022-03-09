@@ -55,8 +55,8 @@ class EndToEndTests(unittest.TestCase):
         board.add_new_entity(EntityClass.BEAR, 3, 1)
         board.add_new_entity(EntityClass.BEAR, 3, 3)
         game = Game(board)
-        game.solve()
-        self.assertTrue(game.is_won())
+        solution = game.solve()
+        self.assertNotEqual([], solution)
 
     def test_FindSolutionWithMultiplePenguins(self):
         # takes long time to run
@@ -70,8 +70,8 @@ class EndToEndTests(unittest.TestCase):
         board.add_new_entity(EntityClass.BEAR, 2, 0)
         board.add_new_entity(EntityClass.BEAR, 3, 3)
         game = Game(board)
-        game.solve()
-        self.assertTrue(game.is_won())
+        solution = game.solve()
+        self.assertNotEqual([], solution)
 
     def test_FindSolutionWithMultipleWaters(self):
         board = Board(5, 5)
@@ -84,5 +84,20 @@ class EndToEndTests(unittest.TestCase):
         board.add_new_entity(EntityClass.BEAR, 3, 0)
         board.add_new_entity(EntityClass.BEAR, 4, 3)
         game = Game(board)
-        game.solve()
-        self.assertTrue(game.is_won())
+        solution = game.solve()
+        self.assertNotEqual([], solution)
+
+    def test_FindShortestSolution(self):
+        board = Board(5, 5)
+        board.add_new_entity(EntityClass.WATER, 2, 2)
+        board.add_new_entity(EntityClass.PENGUIN, 1, 0)
+        board.add_new_entity(EntityClass.BEAR, 0, 1)
+        board.add_new_entity(EntityClass.BEAR, 0, 3)
+        board.add_new_entity(EntityClass.BEAR, 1, 4)
+        board.add_new_entity(EntityClass.BEAR, 2, 1)
+        board.add_new_entity(EntityClass.BEAR, 3, 0)
+        board.add_new_entity(EntityClass.BEAR, 4, 3)
+        game = Game(board)
+        solution = game.solve()
+        self.assertNotEqual([], solution)
+        self.assertEqual(4, len(solution))
