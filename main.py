@@ -5,9 +5,11 @@ import pygame
 from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from button import Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
+VERSION = "1.0.2"
+
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Penguins')
+pygame.display.set_caption('Penguins ' + VERSION)
 
 
 def mouse_clicked_on_board(x: int, y: int) -> bool:
