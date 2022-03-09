@@ -5,7 +5,7 @@ import pygame
 from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from button import Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -40,22 +40,23 @@ def mainloop(game: Game):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if buttons['Solve'].mouse_inside_button():
-                    allow_click_on_board = False
-                    pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_WAIT))
-                    solution = game.solve()
-                    pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW))
-                    buttons['Solve'].visible = False
-                    if solution:
-                        buttons['Next'].visible = True
-                        print("Solution:")
-                        for move in solution:
-                            print(move)
-                        # reverts the moves so we can present the original board
-                        for move in reversed(solution):
-                            game.revert_move(move)
-                    else:
-                        print("No solution found :(")
-                        buttons['Done'].visible = True
+                    if game.board.is_legal_setup():
+                        allow_click_on_board = False
+                        pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_WAIT))
+                        solution = game.solve()
+                        pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW))
+                        buttons['Solve'].visible = False
+                        if solution:
+                            buttons['Next'].visible = True
+                            print("Solution:")
+                            for move in solution:
+                                print(move)
+                            # reverts the moves so we can present the original board
+                            for move in reversed(solution):
+                                game.revert_move(move)
+                        else:
+                            print("No solution found :(")
+                            buttons['Done'].visible = True
                 if buttons['Next'].mouse_inside_button():
                     move: Move = solution[current_move_index]
                     board.apply_move(move.entity, move.direction)

@@ -114,3 +114,6 @@ class Board:
 
     def get_all_entities_of_class(self, entity_class: EntityClass):
         return [e for e in self.entities if e.entity_class == entity_class]
+
+    def is_legal_setup(self) -> bool:
+        return any([e.entity_class == EntityClass.PENGUIN for e in self.entities]) and any([e.entity_class == EntityClass.WATER for e in self.entities])
