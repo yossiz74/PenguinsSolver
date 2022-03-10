@@ -5,7 +5,7 @@ import pygame
 from Penguins.constants import WIDTH, HEIGHT, ROWS, COLS, BLACK, SQUARE_SIZE
 from button import Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -51,9 +51,6 @@ def mainloop(game: Game):
                             print("Solution:")
                             for move in solution:
                                 print(move)
-                            # reverts the moves so we can present the original board
-                            for move in reversed(solution):
-                                game.revert_move(move)
                         else:
                             print("No solution found :(")
                             buttons['Done'].visible = True
@@ -67,11 +64,13 @@ def mainloop(game: Game):
                 if allow_click_on_board and mouse_clicked_on_board(mouse_x, mouse_y) and mouse_not_clicked_on_buttons(mouse_x, mouse_y, list(buttons.values())):
                     col, row = calc_location(mouse_x, mouse_y)
                     # print(f"{x},{y} -> {col},{row}")
-                    if not board.get_entities_in_location(col=col, row=row):
+                    entities = board.get_entities_in_location(col=col, row=row)
+                    if not entities:
                         buttons['Water'].set_position(mouse_x + 1, mouse_y)
                         buttons['Water'].visible = True
                         buttons['Penguin'].set_position(mouse_x + 1, mouse_y + BUTTON_HEIGHT)
                         buttons['Penguin'].visible = True
+                    if not entities or all([e.entity_class == EntityClass.WATER for e in entities]):
                         buttons['Bear'].set_position(mouse_x + 1, mouse_y + BUTTON_HEIGHT * 2)
                         buttons['Bear'].visible = True
                 if buttons['Water'].mouse_inside_button():
