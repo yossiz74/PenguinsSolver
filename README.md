@@ -12,4 +12,4 @@ It's not possible to slide to the edge of the board.
 The solver allows placing elements on the board, and then computes a solution.
 Currently it attempts to find the shortest solution (minimal number of steps).
 This is done by straightforward traversing a depth-first search tree, with little optimization.
-One a solution is found, the user can view it on the board, step by step.
+Once a solution is found, the user can view it on the board, step by step.
